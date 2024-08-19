@@ -1,0 +1,4 @@
+# Ignoring these files
+__pycache__
+virt
+.DS_store
