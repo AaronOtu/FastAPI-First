@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
-from ..schemas import TokenData
+from . import schemas
 
 
 
@@ -22,6 +22,6 @@ def verify_token(token:str, credentials_exception):
         email: str = payload.get("sub")
         if email is None:
             raise credentials_exception
-        token_data = TokenData(email=username)
+        token_data = schemas.TokenData(email=email)
      except JWTError:
         raise credentials_exception

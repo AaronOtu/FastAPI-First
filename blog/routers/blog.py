@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, status, HTTPException
-from .. import schemas, database, models
+from .. import schemas, database, models, OAuth2  
 from sqlalchemy.orm import Session
 
 from typing import List
+
 
 
 router = APIRouter(
@@ -14,13 +15,13 @@ get_db = database.get_db
 
 # Get all blog
 @router.get('/', response_model=List[schemas.ShowBlog])
-def get_all_blog(db: Session = Depends(get_db)):
+def get_all_blog(db: Session = Depends(get_db), current_user: schemas.User = Depends(OAuth2.get_current_user)):
     blogs = db.query(models.Blog).all()
     return blogs
 
 # Create new blog
 @router.post('/', status_code=status.HTTP_201_CREATED)
-def create_blog(request: schemas.Blog, db: Session = Depends(get_db)):
+def create_blog(request: schemas.Blog, db: Session = Depends(get_db),current_user: schemas.User = Depends(OAuth2.get_current_user)):
     new_blog = models.Blog(title=request.title, body=request.body, user_id=1)
     db.add(new_blog)
     db.commit()
@@ -29,7 +30,7 @@ def create_blog(request: schemas.Blog, db: Session = Depends(get_db)):
 
 # Delete blog
 @router.delete('/{id}', status_code=status.HTTP_204_NO_CONTENT)
-def destroy_blog(id: int, db: Session = Depends(get_db)):
+def destroy_blog(id: int, db: Session = Depends(get_db),current_user: schemas.User = Depends(OAuth2.get_current_user)):
     blog = db.query(models.Blog).filter(models.Blog.id == id)
 
     if not blog.first():
@@ -41,7 +42,7 @@ def destroy_blog(id: int, db: Session = Depends(get_db)):
 
 # Get blog by id
 @router.get('/{id}', status_code=status.HTTP_200_OK, response_model=schemas.ShowBlog)
-def get_blog_by_id(id: int, db: Session = Depends(get_db)):
+def get_blog_by_id(id: int, db: Session = Depends(get_db),current_user: schemas.User = Depends(OAuth2.get_current_user)):
     blog = db.query(models.Blog).filter(models.Blog.id == id).first()
     if not blog:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -50,7 +51,7 @@ def get_blog_by_id(id: int, db: Session = Depends(get_db)):
 
 # Update blog
 @router.put('/{id}', status_code=status.HTTP_200_OK)
-def update_blog(id: int, request: schemas.Blog, db: Session = Depends(get_db)):
+def update_blog(id: int, request: schemas.Blog, db: Session = Depends(get_db),current_user: schemas.User = Depends(OAuth2.get_current_user)):
     blog = db.query(models.Blog).filter(models.Blog.id == id)
 
     if not blog.first():
