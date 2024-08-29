@@ -1,4 +1,9 @@
 from pydantic import BaseModel
+from typing import List
+
+
+
+
 
 
 class Blog(BaseModel):
@@ -6,6 +11,42 @@ class Blog(BaseModel):
     body: str
 
 
+class User(BaseModel):
+    name:str
+    email:str
+    password:str
+    
+    
+class UserResponse(BaseModel):
+    name:str
+    email:str
+    blogs: List[Blog] 
+    
+    class Config():
+        orm_mode = True  
+    
+class ShowBlog(BaseModel):
+    title:str
+    body:str
+    creator: UserResponse
+    
+    class Config():
+         orm_mode = True    
+    
+    
 
-    def __str__(self):
-        return f"{self.title}, {self.body}"
+class Login(BaseModel):
+    username:str
+    password:str
+     
+
+         
+         
+        
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    email: str | None = None

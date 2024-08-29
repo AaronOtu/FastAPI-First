@@ -6,7 +6,7 @@ app = FastAPI()
 
 
 @app.get('/blog')
-def index(limit, published: bool = True, sort: Optional[str]  = None):
+def index(limit, published: bool = True, sort: Optional[str] = None):
     if published:
         return {'data': f'{limit} published blogs from the db'}
     else:
@@ -25,14 +25,11 @@ def comments(id):
 
 
 class Blog(BaseModel):
-     title: str
-     description: str
-     published: Optional[bool] = None
-     
-     
-     
-     
+    title: str
+    description: str
+    published: Optional[bool] = None
+
+
 @app.post('/blog')
-def create_blog(blog: Blog) :
+def create_blog(blog: Blog):
     return {'data': f'The title of the blog created is {blog.title}'}
-         
